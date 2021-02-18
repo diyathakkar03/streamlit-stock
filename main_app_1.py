@@ -13,10 +13,10 @@ import plotly.graph_objects as go
 import plotly.express as px
 import streamlit as st
 # My imports
-from api_py_fy import api_data
-from income_statement import income_statement as inc
-from bs_py_fy import balance_sheet as bs
-from bs_py_fy import ratios 
+from streamlit-stock.api_py_fy import api_data
+from streamlit-stock.income_statement import income_statement as inc
+from streamlit-stock.bs_py_fy import balance_sheet as bs
+from streamlit-stock.bs_py_fy import ratios 
 
 
 # STREAMLIT 
