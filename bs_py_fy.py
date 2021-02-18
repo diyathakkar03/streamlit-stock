@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
  
-import icecream as ic 
 import yfinance as yf
 import pandas as pd 
 import numpy as np 
