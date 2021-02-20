@@ -110,12 +110,13 @@ class min_data():
         
         fig = make_subplots(specs=[[{"secondary_y": True}]])
 
+        fig.add_trace(go.Bar(x=df.date, y=df.volume, name = 'Volume'), row = 1, col = 1, secondary_y = True)
+
         fig.add_trace(go.Candlestick(x = df.date, open = df['open'], 
                                     high = df['high'], low = df['low'],
-                                    close = df['close'], name = '%s'%ticker), row = 1, col = 1, secondary_y = True)
+                                    close = df['close'], name = '%s'%ticker), row = 1, col = 1, secondary_y = False)
         fig.add_trace(go.Scatter(x=df.date, y=df.M_20, line=dict(color='blue', width=1), name = 'MA 20m'), row = 1, col = 1)
         fig.add_trace(go.Scatter(x=df.date, y=df.M_50, line=dict(color='red', width=1), name = 'MA 50m'), row = 1, col = 1)
-        fig.add_trace(go.Bar(x=df.date, y=df.volume, name = 'Volume'), row = 1, col = 1, secondary_y = False)
 
 
         fig.update_layout(title = 'Live Data %s'%ticker, yaxis_title = 'Price in USD $')
