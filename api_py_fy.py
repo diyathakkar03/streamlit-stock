@@ -35,7 +35,7 @@ class api_data():
         link_1 = link.format(self.ticker)
         txt_file = requests.get(link_1)
         return txt_file
-    @st.cache
+    @st.cache(suppress_st_warning=True)
     def batch_data(self, data_or_col = 'data', col_name = None):
         try: 
             txt_file = self.get_data()
