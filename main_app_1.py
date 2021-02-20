@@ -154,4 +154,4 @@ st.sidebar.write(' ')
 st.sidebar.write('Disclaimer: This application is for educational purposes only. It is in no way to be considered as a guide or advice to invest.')
 
 st.sidebar.text('Version 1.3')
-st.sidebar.text('Updated on 2/18/2021')
+st.sidebar.text('Updated on 2/20/2021')
