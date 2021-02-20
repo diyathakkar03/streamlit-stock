@@ -30,12 +30,15 @@ class api_data():
     def col_name_func(self, data_frame):
         return [(re.sub(r'([A-Z])', r' \1', col_name)).title() for col_name in data_frame.columns]
     
-    #@st.cache(suppress_st_warning=True)
-    def get_data(self, data_or_col = 'data', col_name = None):
+    def get_data(self):
+        link = self.link.format(self.ticker)
+        link_1 = link.format(self.ticker)
+        txt_file = requests.get(link_1)
+        return txt_file
+    @st.cache
+    def batch_data(self, data_or_col = 'data', col_name = None):
         try: 
-            link = self.link.format(self.ticker)
-            link_1 = link.format(self.ticker)
-            txt_file = requests.get(link_1)
+            txt_file = self.get_data()
             # checking if sufficent data is available    
             txt_file.text[5]
             json_file = txt_file.json()
@@ -50,11 +53,14 @@ class api_data():
             else:
                 raise AttributeError 
         except AttributeError:
-             st.error(print('Sufficent Data Not available or invalid ticker symbol'))
-        except IndexError as e:
-             st.error(print('Sufficent Data Not available or invalid ticker symbol'))
+             st.error(('Sufficent Data Not available or invalid ticker symbol'))
+             st.stop()
+        except IndexError:
+             st.error(('Sufficent Data Not available or invalid ticker symbol'))
+             st.stop()
         except ValueError: 
-            print('Data format is incorrect')
+            st.error('Data format is incorrect')
+            st.stop()
     def bs_is(df):
         try:    
             df = df.iloc[:,:-2] 
@@ -62,4 +68,17 @@ class api_data():
             return df 
         except AttributeError:
              st.error(print('ufficent Data Not available or invalid ticker symbol- No Data Frame was passed from previous function'))
+    
+    def live_data(self):
+        txt_file = self.get_data()    
+        txt_file.text[5]
+        df = pd.json_normalize(txt_file.json()).iloc[:520]
+        return df 
+
+    
+
+
+        #df = pd.json_normalize(requests.get(all_links['min stock'].format(ticker)).json())
+
+
    

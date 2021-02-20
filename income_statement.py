@@ -12,7 +12,9 @@ import re
 import datetime
 import plotly.graph_objects as go
 import plotly.express as px
+from plotly.subplots import make_subplots
 import streamlit as st
+
 
 class income_statement():
     def __init__(self,df):
@@ -93,3 +95,40 @@ class income_statement():
                         mode= 'none', name = 'net income %'))
         fig.update_layout(title = "%s - Revenue & Net Income Percentage Change " % co_name)
         return st.plotly_chart(fig)
+
+
+class min_data():
+    def __init__(self,df):
+        self.df = df
+
+    def plot_df_1(self):
+        df = self.df.iloc[::-1]
+        df['M_20'] = df.close.rolling(20).mean()
+        df['M_50'] = df.close.rolling(50).mean()
+        return df 
+    def plot_1(df,ticker, placeholder):
+        
+        fig = make_subplots(specs=[[{"secondary_y": True}]])
+
+        fig.add_trace(go.Candlestick(x = df.date, open = df['open'], 
+                                    high = df['high'], low = df['low'],
+                                    close = df['close'], name = '%s'%ticker), row = 1, col = 1, secondary_y = False)
+        fig.add_trace(go.Scatter(x=df.date, y=df.M_20, line=dict(color='blue', width=1), name = 'MA 20m'), row = 1, col = 1)
+        fig.add_trace(go.Scatter(x=df.date, y=df.M_50, line=dict(color='red', width=1), name = 'MA 50m'), row = 1, col = 1)
+        fig.add_trace(go.Bar(x=df.date, y=df.volume, name = 'Volume'), row = 1, col = 1, secondary_y = True)
+
+
+        fig.update_layout(title = 'Live Data %s'%ticker, yaxis_title = 'Price in USD $')
+        #fig.update_xaxes(matches = 'x')
+
+        fig.update_xaxes(rangeslider_visible = True,rangeselector = dict(
+            buttons = list([
+                dict(count = 15, label = '15m', step = 'minute', stepmode = 'backward'),
+                dict(count = 45, label = '45m', step = 'minute', stepmode = 'backward'),
+                dict(count = 1, label = 'HTD', step = 'hour', stepmode = 'backward'),
+                dict(count = 3, label = '3h', step = 'minute', stepmode = 'backward'),
+                dict(step = 'all')])))
+        fig.update_yaxes(title_text="In US $", secondary_y=False)
+        fig.update_yaxes(title_text="Volume", secondary_y=True)
+
+        return placeholder.write(fig)
