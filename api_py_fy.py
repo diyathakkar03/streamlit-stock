@@ -37,38 +37,24 @@ class api_data():
         return txt_file
     @st.cache(suppress_st_warning=True)
     def batch_data(self, data_or_col = 'data', col_name = None):
-        try: 
-            txt_file = self.get_data()
-            # checking if sufficent data is available    
-            txt_file.text[5]
-            json_file = txt_file.json()
-            col_labels = sorted(list(set([self.remove(j) for i in json_file for j in list(i.keys())])))
-            if data_or_col == 'col':
-                return col_labels 
-            elif col_labels == col_name: 
-                df = pd.json_normalize(json_file)
-                df.columns = self.col_name_func(df)
-                df = df.iloc[0:5,:]
-                return df
-            else:
-                raise AttributeError 
-        except AttributeError:
-             st.error(('Sufficent Data Not available or invalid ticker symbol'))
-             st.stop()
-        except IndexError:
-             st.error(('Sufficent Data Not available or invalid ticker symbol'))
-             st.stop()
-        except ValueError: 
-            st.error('Data format is incorrect')
-            st.stop()
+        txt_file = self.get_data()
+        # checking if sufficent data is available    
+        txt_file.text[5]
+        json_file = txt_file.json()
+        col_labels = sorted(list(set([self.remove(j) for i in json_file for j in list(i.keys())])))
+        if data_or_col == 'col':
+            return col_labels 
+        elif col_labels == col_name: 
+            df = pd.json_normalize(json_file)
+            df.columns = self.col_name_func(df)
+            df = df.iloc[0:5,:]
+            return df
+        
     def bs_is(df):
-        try:    
-            df = df.iloc[:,:-2] 
-            df['Accepted Date'] = pd.DatetimeIndex(df['Accepted Date']).date
-            return df 
-        except AttributeError:
-             st.error(print('ufficent Data Not available or invalid ticker symbol- No Data Frame was passed from previous function'))
-    
+        df = df.iloc[:,:-2] 
+        df['Accepted Date'] = pd.DatetimeIndex(df['Accepted Date']).date
+        return df 
+       
     def live_data(self):
         txt_file = self.get_data()    
         txt_file.text[5]
@@ -77,8 +63,6 @@ class api_data():
 
     
 
-
-        #df = pd.json_normalize(requests.get(all_links['min stock'].format(ticker)).json())
 
 
    
