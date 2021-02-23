@@ -11,7 +11,7 @@ import streamlit as st
 from PIL import Image
 import time
 
-# # My imports
+# # My module imports
 from pyfiles.api_py_fy import api_data
 from pyfiles.income_statement import income_statement as inc
 from pyfiles.income_statement import min_data as md
@@ -20,8 +20,7 @@ from pyfiles.bs_py_fy import ratios
 
 
 # STREAMLIT 
-
-
+# sidebar image
 image = Image.open('sidebarimage.jpg')
 
 st.sidebar.image(image, caption='', use_column_width=True)
@@ -31,16 +30,15 @@ st.sidebar.image(image, caption='', use_column_width=True)
 
 st.title('Stocks Analytical Chart App')
 
-## Adding an expandable column for content
-my_expander = st.beta_expander('About', expanded= False)
+## Adding an expandable column for about app
+my_expander = st.beta_expander('About App', expanded= False)
 with my_expander:
     text = open('text/content.txt', 'r')
-
     st.write(text.read())
 
 
 
-
+# API links
 all_links = {"Balance Sheet": "https://financialmodelingprep.com/api/v3/balance-sheet-statement/{}?period=quarter&limit=400&apikey=da58bd9052194c551bbe95498876fda0",
             "Income Statement":"https://financialmodelingprep.com/api/v3/income-statement/{}?period=quarter&limit=400&apikey=da58bd9052194c551bbe95498876fda0",
             "Financial Ratios":"https://financialmodelingprep.com/api/v3/ratios/{}?period=quarter&limit=140&apikey=da58bd9052194c551bbe95498876fda0", 
@@ -49,30 +47,37 @@ all_links = {"Balance Sheet": "https://financialmodelingprep.com/api/v3/balance-
             "Live Data": "https://financialmodelingprep.com/api/v3/historical-chart/1min/{}?apikey=da58bd9052194c551bbe95498876fda0"}
 
 
+
 st.subheader('Enter the ticker symbol below')
+# User input streamlit for any symbol
 ticker = st.text_input('','W', key = '1234')
 
+# File contaning ticker symbol and company name
 ticker_df = pd.read_csv('tickers.csv')
 
+# Getting the ticker symbol and company name on basis of user input
+try:
+    ticker_acro = list(ticker_df[ticker_df.symbol == ticker.upper()].name)
+    ticker_acro[1]
+    st.text('You selected data for %s'%ticker_acro[0])
+except IndexError:
+    ticker_acro = ticker
+    st.text('You selected data for %s'%ticker_acro.upper())
 
-# Getting the ticker symbol 
-ticker_acro = list(ticker_df[ticker_df.symbol == ticker.upper()].name)
 
 st.sidebar.header('Select the type of financial statement')
 add_selectbox = st.sidebar.selectbox('',
     ("Income Statement", "Balance Sheet", "Financial Ratios", 'Live Data'))
 
-col_name = api_data('AAPL', all_links,add_selectbox ).batch_data(data_or_col = 'col')
 
 
-
-# Block for Error Handling user input
+# Block for Error Handling user input when sufficent data is not available 
 try:
-    st.text('You selected data for %s'%ticker_acro[0])
-
     if add_selectbox == 'Live Data':
         df_1 = api_data(ticker.upper(), all_links, add_selectbox).live_data()
     else:
+        col_name = api_data('AAPL', all_links,add_selectbox ).batch_data(data_or_col = 'col')
+
         st.header('Previous five quarterly financial results')
 
         df_1 = api_data(ticker.upper(), all_links, add_selectbox).batch_data(col_name = col_name)
@@ -84,19 +89,19 @@ except Exception:
 if add_selectbox == 'Income Statement':
     df_1 = api_data.bs_is(df_1)
     df_2 = inc(df_1)
-
-    inc.is_df_1(df_2)
     
+    # For revenue Plot
+    inc.is_df_1(df_2)
     inc.rev_plot(df_2)
-
 
     st.subheader('Waterfall Chart')
     option = st.selectbox('Select the Quarterly Result',list(df_2.df['Date']))
 
+    # Waterfall chart
     df_3, index_no = inc.waterfall_df(df_2,date = option)    
 
     inc.is_waterfall_plot(df_3,index_no = index_no)
-    
+    # Rev and Net Income % change plot
     df_4 = inc.pct_df(df_2.df)
     st.subheader('Revenue & Net Income percentage change over previous five quarters')
     inc.rev_income(df_4, ticker_acro[0])
@@ -125,6 +130,7 @@ elif add_selectbox == 'Live Data':
     start_button = st.empty()
     placeholder = st.empty()
 
+    # Block for live data refresh 
     
     if start_button.button('Start',key='start'):
         start_button.empty()
@@ -134,6 +140,7 @@ elif add_selectbox == 'Live Data':
         while True:
             md.plot_1(md(df_1).plot_df_1(),ticker_acro[0], placeholder = placeholder) 
             i +=1 
+            # Limiting it to 10 requests to ensure API limit is not crossed 
             if i > 10:
                 break
             time.sleep(1)
