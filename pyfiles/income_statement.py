@@ -1,11 +1,7 @@
 # module imports
 from pyfiles.api_py_fy import api_data
-import yfinance as yf
 import pandas as pd 
 import numpy as np 
-import matplotlib.pyplot as plt
-from matplotlib.ticker import FuncFormatter
-import seaborn as sns
 import requests 
 import json
 import re
