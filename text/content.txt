@@ -1,0 +1,4 @@
+Hi, welcome to my very first web-app. In today's world of stocks and stonks, it is easy to forget why the financial market exists. We often hear the experts talking about terms like balance sheets or some other financial statements. Learning & understanding all these terminologies is easy, but keeping track of all the financial data and interpreting it to make a sensible investment well that's the hard part.
+
+The purpose of this app is to help demystify the world of the stock market with help of charts.  
+
