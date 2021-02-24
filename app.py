@@ -58,7 +58,7 @@ ticker_df = pd.read_csv('tickers.csv')
 # Getting the ticker symbol and company name on basis of user input
 try:
     ticker_acro = list(ticker_df[ticker_df.symbol == ticker.upper()].name)
-    ticker_acro[1]
+    ticker_acro[0]
     st.text('You selected data for %s'%ticker_acro[0])
 except IndexError:
     ticker_acro = ticker
