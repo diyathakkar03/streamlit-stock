@@ -39,12 +39,12 @@ with my_expander:
 
 
 # API links
-all_links = {"Balance Sheet": "https://financialmodelingprep.com/api/v3/balance-sheet-statement/{}?period=quarter&limit=400&apikey=da58bd9052194c551bbe95498876fda0",
-            "Income Statement":"https://financialmodelingprep.com/api/v3/income-statement/{}?period=quarter&limit=400&apikey=da58bd9052194c551bbe95498876fda0",
-            "Financial Ratios":"https://financialmodelingprep.com/api/v3/ratios/{}?period=quarter&limit=140&apikey=da58bd9052194c551bbe95498876fda0", 
-            "Stock Symbol":'https://financialmodelingprep.com/api/v3/stock/list?apikey=da58bd9052194c551bbe95498876fda0',
-            "Live Price": 'https://financialmodelingprep.com/api/v3/quote-short/{}?apikey=da58bd9052194c551bbe95498876fda0',
-            "Live Data": "https://financialmodelingprep.com/api/v3/historical-chart/1min/{}?apikey=da58bd9052194c551bbe95498876fda0"}
+all_links = {"Balance Sheet": "https://financialmodelingprep.com/api/v3/balance-sheet-statement/{}?apikey=da58bd9052194c551bbe95498876fda0&limit=120",
+            "Income Statement":"https://financialmodelingprep.com/api/v3/income-statement/{}?limit=120&apikey=da58bd9052194c551bbe95498876fda0",
+            "Financial Ratios":"https://financialmodelingprep.com/api/v3/ratios/{}?limit=40&apikey=da58bd9052194c551bbe95498876fda0", 
+            "Stock Symbol":'https://financialmodelingprep.com/api/v3/stock/list?apikey=da58bd9052194c551bbe95498876fda0&limit=120',
+            "Live Price": 'https://financialmodelingprep.com/api/v3/quote-short/{}?apikey=da58bd9052194c551bbe95498876fda0&limit=120',
+            "Live Data": "https://financialmodelingprep.com/api/v3/historical-chart/1min/W?apikey=da58bd9052194c551bbe95498876fda0&limit=120"}
 
 
 
@@ -77,8 +77,10 @@ try:
         df_1 = api_data(ticker.upper(), all_links, add_selectbox).live_data()
     else:
         col_name = api_data('AAPL', all_links,add_selectbox ).batch_data(data_or_col = 'col')
-
-        st.header('Previous five quarterly financial results')
+        if add_selectbox == 'Financial Ratios':
+            st.header('Previous five years financial results')
+        else:
+            st.header('Previous five quarterly financial results')
 
         df_1 = api_data(ticker.upper(), all_links, add_selectbox).batch_data(col_name = col_name)
 except Exception:
@@ -121,7 +123,7 @@ elif add_selectbox == 'Financial Ratios':
     df_3,df_4 = ratios(df_1).ratio_df()
     
 
-    path_3= st.selectbox( 'Choose the Ratio to analyze', list(df_3.columns))
+    path_3= st.selectbox( 'Choose the Ratio to analyze', list(df_3.columns), index = 21)
 
     ratios.ratio_graph(df_3,df_4,col_name=path_3)
 
